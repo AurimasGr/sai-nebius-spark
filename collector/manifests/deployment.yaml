@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collector
+  labels:
+    app: collector
+  namespace: swirlai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: collector
+  template:
+    metadata:
+      labels:
+        app: collector
+    spec:
+      containers:
+      - name: collector
+        image: aurimasg/collector:0.1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+          - name: APP_ENV
+            value: Dev
