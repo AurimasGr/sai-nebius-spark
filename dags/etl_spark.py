@@ -119,7 +119,7 @@ def archive_objects(source_bucket, destination_bucket, etl_timestamp):
         print(f"Moving: {key}")
 
         # Copy the object to the destination bucket
-        copy_source = {'Bucket': source_bucket, 'Key': f"{etl_timestamp}/{key}"}
+        copy_source = {'Bucket': source_bucket, 'Key': f"{key}"}
         s3.copy_object(CopySource=copy_source, Bucket=destination_bucket, Key=f"{etl_timestamp}/{key}")
 
         # Delete the object from the source bucket after copying
@@ -172,6 +172,7 @@ def process_data(etl_timestamp):
         .withColumn('etl_timestamp', lit(etl_timestamp))
         .select("etl_timestamp", "collector_id", "collector_tstamp", "event_type", "root_id", "schema_version", "payload.*")
         .write
+        .mode("append")
         .partitionBy("etl_timestamp")
         .parquet(f"s3a://{PROCESSED_BUCKET}/{event_type}/{schema_version.split('-')[0]}"))
 
