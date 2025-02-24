@@ -178,7 +178,7 @@ time_now = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
 s3 = boto3.client('s3')
 
-with DAG(dag_id="spark_etl", start_date=datetime(2025, 1, 24), schedule="*/5 * * * *") as dag:
+with DAG(dag_id="spark_etl", start_date=datetime(2025, 1, 24), max_active_runs=1, schedule="*/20 * * * *") as dag:
 
     @task()
     def move_data_to_processing():
