@@ -141,6 +141,8 @@ def process_data(etl_timestamp):
 
     import urllib.request
 
+    print(os.environ["NB_SPARK_SESSION_ENDPOINT"])
+
     url = "https://storage.eu-north1.nebius.cloud/msp-certs/ca.pem"
 
     urllib.request.urlretrieve(url, "ca.pem")
@@ -151,6 +153,8 @@ def process_data(etl_timestamp):
         password=os.environ["NB_SPARK_CLUSTER_PASSWORD"],
         root_certificates_file=expanduser('ca.pem') 
     )
+
+    print(expanduser('ca.pem'))
 
     spark = (SparkSession
         .builder
