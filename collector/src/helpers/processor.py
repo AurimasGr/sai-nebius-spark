@@ -2,6 +2,8 @@ from datetime import datetime
 import pytz
 import uuid
 import os
+import json
+import boto3
 
 
 class Processor:
@@ -41,3 +43,35 @@ class Processor:
     def processed_event(self) -> dict:
 
         return self.process_event(self.event)
+
+
+class Buffer:
+
+    BUFFER_SIZE = 50
+    BUCKET_NAME = os.environ["RAW_LANDING_BUCKET"]
+
+    def __init__(self):
+
+        self.buffer = []
+        self.s3 = boto3.client('s3')
+
+    def add(self, event: dict):
+
+        self.buffer.append(event)
+
+        if len(self.buffer) >= self.BUFFER_SIZE:
+            self.flush()
+
+    def clear(self):
+
+        self.buffer = []
+
+    def flush(self):
+
+        self.s3.put_object(
+            Body=json.dumps(self.buffer),
+            Bucket=self.BUCKET_NAME,
+            Key=f'{datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d-%H-%M-%S-%f")}.json'
+        )
+
+        self.clear()

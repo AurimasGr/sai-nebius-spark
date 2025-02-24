@@ -17,10 +17,26 @@ spec:
     spec:
       containers:
       - name: collector
-        image: aurimasg/collector:0.1.0
+        image: aurimasg/collector:0.2.0
         imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
           - name: APP_ENV
             value: Dev
+          - name: RAW_LANDING_BUCKET
+            value: sai-raw
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_DEFAULT_REGION
+            value: eu-north1
+          - name: AWS_ENDPOINT_URL
+            value: https://storage.eu-north1.nebius.cloud:443
